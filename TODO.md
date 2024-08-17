@@ -2,3 +2,5 @@
 - backups
 - message limiter
 - who is
+- telemetry
+- watchdog or async
