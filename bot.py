@@ -5,11 +5,17 @@ import re
 import telebot
 from telebot.custom_filters import IsReplyFilter
 
+
 logging.basicConfig(level=logging.DEBUG)
 
 TARGET_CHAT_ID = os.getenv("TG_CHAT_ID")
 TOKEN = os.getenv("TG_TOKEN")
 bot = telebot.TeleBot(TOKEN, parse_mode=None) # You can set parse_mode by default. HTML or MARKDOWN
+
+
+def is_from_polly(message):
+    logging.debug('message chat_id = %s, from_polly = %s', message.chat.id, message.chat.id == str(TARGET_CHAT_ID))
+    return str(message.chat.id) == str(TARGET_CHAT_ID)
 
 
 def compose(text, chat_id):
@@ -30,16 +36,28 @@ def send_welcome(message):
 
 @bot.message_handler(is_reply=True)
 def reply_from_polly(message):
-    reply_id = extract_chat_id(message.reply_to_message.text)
-    if reply_id:
-        bot.copy_message(chat_id=reply_id, from_chat_id=message.chat.id, message_id=message.id)
+    # admin mode
+    if is_from_polly(message):
+        reply_id = extract_chat_id(message.reply_to_message.text)
+        if reply_id:
+            bot.copy_message(chat_id=reply_id, from_chat_id=message.chat.id, message_id=message.id)
+        else:
+            bot.reply_to(message, 'Не могу ответить :(')
+
+    # user mode
     else:
-        logging.warning('can\'t parse reply id from %s', message.reply_to_message.text)
-    
+        send_to_polly(message)    
+
 
 @bot.message_handler(func=lambda m: True)
 def send_to_polly(message):
-    bot.send_message(TARGET_CHAT_ID, message.text + f'\n\n#id{message.chat.id}')
+    # admin mode
+    if is_from_polly(message):
+        bot.reply_to(message, 'Надо использовать reply :S')
+
+    # user mode
+    else:
+        bot.send_message(TARGET_CHAT_ID, message.text + f'\n\n#id{message.chat.id}')
 
 
 if __name__ == '__main__':

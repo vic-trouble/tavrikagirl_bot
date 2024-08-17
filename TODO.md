@@ -3,6 +3,6 @@
 - message limiter
 - who is
 - telemetry
-- watchdog or async
+- watchdog
+- async
 - logs
-- admin only replies
