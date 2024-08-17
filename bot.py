@@ -14,7 +14,6 @@ bot = telebot.TeleBot(TOKEN, parse_mode=None) # You can set parse_mode by defaul
 
 
 def is_from_polly(message):
-    logging.debug('message chat_id = %s, from_polly = %s', message.chat.id, message.chat.id == str(TARGET_CHAT_ID))
     return str(message.chat.id) == str(TARGET_CHAT_ID)
 
 
