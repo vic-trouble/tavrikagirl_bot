@@ -4,3 +4,5 @@
 - who is
 - telemetry
 - watchdog or async
+- logs
+- admin only replies
