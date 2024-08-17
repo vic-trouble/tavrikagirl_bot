@@ -7,7 +7,7 @@ from telebot.custom_filters import IsReplyFilter
 
 logging.basicConfig(level=logging.DEBUG)
 
-TARGET_CHAT_ID = 946013950
+TARGET_CHAT_ID = os.getenv("TG_CHAT_ID")
 TOKEN = os.getenv("TG_TOKEN")
 bot = telebot.TeleBot(TOKEN, parse_mode=None) # You can set parse_mode by default. HTML or MARKDOWN
 
