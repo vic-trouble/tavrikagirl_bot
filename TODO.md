@@ -1,8 +1,8 @@
 - ban / unban
 - backups
 - message limiter
-- who is
 - telemetry
 - watchdog
 - async
 - logs
+- help

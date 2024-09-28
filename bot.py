@@ -28,11 +28,44 @@ def extract_chat_id(text):
     return m.group(1) if m else None
 
 
+def extract_soft_chat_id(text):
+    last_line = text.split('\n')[-1].strip()
+    logging.info('last line: %s', last_line)
+    m = re.search('#?(id)?([0-9]+)', last_line)
+    return m.group(2) if m else None
+
+
 @bot.message_handler(commands=['start'])
 def send_welcome(message):
     bot.reply_to(message, "Привет!")
 
 
+def get_user_info(chat_id):
+    try:
+        chat = bot.get_chat(chat_id)
+        if not chat:
+            return 'Нет инфы :('
+    except:
+        return 'Не найден :('
+    
+    return f'Имя {chat.first_name} {chat.last_name}, ник https://t.me/{chat.username}'
+
+    
+@bot.message_handler(commands=['who'])
+def send_welcome(message):
+    # admin mode
+    if is_from_polly(message):
+        if message.reply_to_message:
+            if reply_id := extract_chat_id(message.reply_to_message.text):
+                bot.reply_to(message, get_user_info(reply_id))
+            else:
+                bot.reply_to(message, 'Не могу найти id :(')
+        elif reply_id := extract_soft_chat_id(message.text):
+            bot.reply_to(message, get_user_info(reply_id))
+        else:
+            bot.reply_to(message, 'Не могу найти id :(')
+
+    
 @bot.message_handler(is_reply=True)
 def reply_from_polly(message):
     # admin mode
